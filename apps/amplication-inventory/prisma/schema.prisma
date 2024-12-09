@@ -13,8 +13,88 @@ model User {
   firstName String?
   id        String   @id @default(cuid())
   lastName  String?
+  orders    Order[]
   password  String
   roles     Json
   updatedAt DateTime @updatedAt
   username  String   @unique
+}
+
+model Category {
+  categoryName String?
+  createdAt    DateTime  @default(now())
+  description  String?
+  id           String    @id @default(cuid())
+  products     Product[]
+  updatedAt    DateTime  @updatedAt
+}
+
+model Supplier {
+  contactEmail String?
+  contactPhone String?
+  createdAt    DateTime  @default(now())
+  id           String    @id @default(cuid())
+  products     Product[]
+  supplierName String?
+  updatedAt    DateTime  @updatedAt
+}
+
+model Product {
+  category        Category?   @relation(fields: [categoryId], references: [id])
+  categoryId      String?
+  createdAt       DateTime    @default(now())
+  description     String?
+  id              String      @id @default(cuid())
+  inventories     Inventory[]
+  name            String?
+  orderItems      OrderItem[]
+  price           Float?
+  productName     String?
+  quantityInStock Int?
+  supplier        Supplier?   @relation(fields: [supplierId], references: [id])
+  supplierId      String?
+  updatedAt       DateTime    @updatedAt
+  warehouses      Warehouse[]
+}
+
+model Order {
+  createdAt  DateTime    @default(now())
+  id         String      @id @default(cuid())
+  orderDate  DateTime?
+  orderItems OrderItem[]
+  updatedAt  DateTime    @updatedAt
+  user       User?       @relation(fields: [userId], references: [id])
+  userId     String?
+}
+
+model OrderItem {
+  createdAt DateTime @default(now())
+  id        String   @id @default(cuid())
+  order     Order?   @relation(fields: [orderId], references: [id])
+  orderId   String?
+  product   Product? @relation(fields: [productId], references: [id])
+  productId String?
+  quantity  Int?
+  updatedAt DateTime @updatedAt
+}
+
+model Warehouse {
+  createdAt   DateTime    @default(now())
+  id          String      @id @default(cuid())
+  inventories Inventory[]
+  product     Product?    @relation(fields: [productId], references: [id])
+  productId   String?
+  quantity    Int?
+  updatedAt   DateTime    @updatedAt
+}
+
+model Inventory {
+  createdAt   DateTime   @default(now())
+  id          String     @id @default(cuid())
+  product     Product?   @relation(fields: [productId], references: [id])
+  productId   String?
+  quantity    Int?
+  updatedAt   DateTime   @updatedAt
+  warehouse   Warehouse? @relation(fields: [warehouseId], references: [id])
+  warehouseId String?
 }
